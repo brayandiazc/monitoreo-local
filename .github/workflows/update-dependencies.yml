@@ -1,0 +1,69 @@
+name: Update Dependencies
+
+on:
+  schedule:
+    - cron: "0 0 * * 0" # Every Sunday at midnight
+  workflow_dispatch:
+
+jobs:
+  update-dependencies:
+    name: Update Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install pip-tools
+        run: pip install pip-tools
+
+      - name: Update Python dependencies
+        run: |
+          # Create requirements.in from requirements.txt
+          cp requirements.txt requirements.in
+
+          # Update dependencies
+          pip-compile --upgrade requirements.in
+
+          # Check if there are any updates
+          if ! diff requirements.txt requirements.in > /dev/null; then
+            echo "Updates found!"
+            cp requirements.in requirements.txt
+          else
+            echo "No updates found"
+          fi
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update dependencies"
+          title: "chore: update dependencies"
+          body: |
+            ## 🔄 Dependency Updates
+
+            This PR updates the project dependencies to their latest versions.
+
+            ### Changes:
+            - Updated Python dependencies
+
+            ### Testing:
+            - [ ] All tests pass
+            - [ ] Application builds successfully
+            - [ ] No breaking changes introduced
+
+            ### Notes:
+            Please review the changes and test thoroughly before merging.
+          branch: update-dependencies
+          delete-branch: true
+          labels: |
+            dependencies
+            automated
+          assignees: ${{ github.repository_owner }}

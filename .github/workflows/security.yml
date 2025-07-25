@@ -1,0 +1,140 @@
+name: Security Analysis
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: "0 2 * * 1" # Every Monday at 2 AM
+
+jobs:
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          format: "sarif"
+          output: "trivy-results.sarif"
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: "trivy-results.sarif"
+
+      - name: Run Bandit security linter
+        run: |
+          pip install bandit
+          bandit -r app/ -f json -o bandit-results.json || true
+
+      - name: Upload Bandit results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: bandit-results
+          path: bandit-results.json
+          retention-days: 30
+
+      - name: Run Safety check
+        run: |
+          pip install safety
+          safety check --json --output safety-results.json || true
+
+      - name: Upload Safety results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: safety-results
+          path: safety-results.json
+          retention-days: 30
+
+  docker-security:
+    name: Docker Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        run: docker build -t monitoreo-local:security-test .
+
+      - name: Run Trivy vulnerability scanner on Docker image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "monitoreo-local:security-test"
+          format: "sarif"
+          output: "trivy-docker-results.sarif"
+
+      - name: Upload Docker scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: "trivy-docker-results.sarif"
+
+      - name: Run Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          format: sarif
+          output-file: hadolint-results.sarif
+
+      - name: Upload Hadolint results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: "hadolint-results.sarif"
+
+  dependency-check:
+    name: Dependency Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pip-audit
+
+      - name: Run pip-audit
+        run: |
+          pip-audit --format json --output pip-audit-results.json || true
+
+      - name: Upload pip-audit results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: pip-audit-results
+          path: pip-audit-results.json
+          retention-days: 30
+
+      - name: Check for known vulnerabilities
+        run: |
+          if [ -f pip-audit-results.json ]; then
+            VULN_COUNT=$(jq '.vulnerabilities | length' pip-audit-results.json)
+            if [ "$VULN_COUNT" -gt 0 ]; then
+              echo "❌ Found $VULN_COUNT vulnerabilities in dependencies"
+              exit 1
+            else
+              echo "✅ No vulnerabilities found in dependencies"
+            fi
+          fi

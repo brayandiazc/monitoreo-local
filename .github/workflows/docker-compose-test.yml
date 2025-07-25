@@ -1,0 +1,152 @@
+name: Docker Compose Integration Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  docker-compose-test:
+    name: Test Complete Stack
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Flask image
+        run: docker build -t monitoreo-local:test .
+
+      - name: Start all services
+        run: |
+          docker-compose up -d
+          echo "Waiting for services to be ready..."
+          sleep 60
+
+      - name: Check service status
+        run: |
+          docker-compose ps
+          echo "Service logs:"
+          docker-compose logs --tail=20
+
+      - name: Test Flask application
+        run: |
+          # Test main endpoint
+          curl -f http://localhost:5000/ || exit 1
+          echo "✅ Flask main endpoint working"
+
+          # Test metrics endpoint
+          curl -f http://localhost:5000/metrics || exit 1
+          echo "✅ Flask metrics endpoint working"
+
+          # Test log generation
+          curl -f "http://localhost:5000/generar-log?type=info&message=test" || exit 1
+          echo "✅ Flask log generation working"
+
+      - name: Test Prometheus
+        run: |
+          # Wait for Prometheus to be ready
+          sleep 30
+
+          # Test Prometheus API
+          curl -f http://localhost:9090/api/v1/targets || exit 1
+          echo "✅ Prometheus API working"
+
+          # Check if Flask target is up
+          TARGETS=$(curl -s http://localhost:9090/api/v1/targets | jq -r '.data.activeTargets[] | select(.labels.job == "flask-app") | .health')
+          if [ "$TARGETS" = "up" ]; then
+            echo "✅ Flask target is healthy in Prometheus"
+          else
+            echo "❌ Flask target is not healthy"
+            exit 1
+          fi
+
+      - name: Test Elasticsearch
+        run: |
+          # Wait for Elasticsearch to be ready
+          sleep 30
+
+          # Test Elasticsearch health
+          curl -f http://localhost:9200/_cluster/health || exit 1
+          echo "✅ Elasticsearch is healthy"
+
+      - name: Test Kibana
+        run: |
+          # Wait for Kibana to be ready
+          sleep 30
+
+          # Test Kibana status
+          curl -f http://localhost:5601/api/status || exit 1
+          echo "✅ Kibana is running"
+
+      - name: Test Grafana
+        run: |
+          # Wait for Grafana to be ready
+          sleep 30
+
+          # Test Grafana API
+          curl -f http://localhost:3000/api/health || exit 1
+          echo "✅ Grafana is healthy"
+
+      - name: Generate test data
+        run: |
+          echo "Generating test data..."
+
+          # Generate some logs
+          for i in {1..10}; do
+            curl -s "http://localhost:5000/generar-log?type=info&message=Test%20log%20$i" > /dev/null
+            curl -s "http://localhost:5000/" > /dev/null
+            sleep 1
+          done
+
+          # Generate some errors
+          for i in {1..3}; do
+            curl -s "http://localhost:5000/simular-error" > /dev/null
+            sleep 1
+          done
+
+          echo "✅ Test data generated"
+
+      - name: Verify data in services
+        run: |
+          echo "Verifying data in services..."
+
+          # Check if logs are being processed
+          sleep 30
+
+          # Check Elasticsearch indices
+          INDICES=$(curl -s http://localhost:9200/_cat/indices | grep flask-logs || echo "")
+          if [ -n "$INDICES" ]; then
+            echo "✅ Logs are being indexed in Elasticsearch"
+          else
+            echo "⚠️  No logs found in Elasticsearch yet"
+          fi
+
+          # Check Prometheus metrics
+          METRICS=$(curl -s http://localhost:5000/metrics | grep flask_ || echo "")
+          if [ -n "$METRICS" ]; then
+            echo "✅ Flask metrics are available"
+          else
+            echo "⚠️  No Flask metrics found"
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "Cleaning up..."
+          docker-compose down -v
+          docker system prune -f
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-compose-logs
+          path: |
+            docker-compose.log
+          retention-days: 7

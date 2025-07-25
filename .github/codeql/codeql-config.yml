@@ -1,0 +1,34 @@
+name: "CodeQL Config"
+
+queries:
+  # Use these queries by default
+  - uses: security-and-quality
+
+paths:
+  # Include all files in the repository
+  - src
+  - app
+  - tests
+
+paths-ignore:
+  # Exclude these paths
+  - "**/*.md"
+  - "**/*.txt"
+  - "**/*.yml"
+  - "**/*.yaml"
+  - "**/*.json"
+  - "**/*.log"
+  - "**/node_modules/**"
+  - "**/venv/**"
+  - "**/env/**"
+  - "**/.git/**"
+  - "**/logs/**"
+# Disable the `security-and-quality` suite, as it is not available in this CodeQL version.
+# Instead, explicitly request the default queries.
+# For more information on CodeQL query suites, go to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors#codeql-query-suites
+
+# queries:
+#   - uses: security-and-quality
+
+# queries:
+#   - uses: security-and-quality@1.0.0

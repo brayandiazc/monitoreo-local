@@ -242,6 +242,30 @@ docker-compose down -v
 4. Push a la rama
 5. Abre un Pull Request
 
+## 🚀 GitHub Actions
+
+Este proyecto incluye workflows de GitHub Actions para automatización completa del CI/CD:
+
+### Workflows Disponibles
+
+- **CI/CD Pipeline**: Pruebas, seguridad, construcción y despliegue
+- **Docker Compose Test**: Pruebas de integración del stack completo
+- **Security Analysis**: Escaneo de vulnerabilidades y análisis de seguridad
+- **Deploy**: Despliegue automático a staging y producción
+- **Update Dependencies**: Actualización automática de dependencias
+- **CodeQL**: Análisis de seguridad del código
+
+### Badges
+
+[![CI/CD](https://github.com/{username}/{repo}/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/{username}/{repo}/actions)
+[![Security](https://github.com/{username}/{repo}/workflows/Security%20Analysis/badge.svg)](https://github.com/{username}/{repo}/actions)
+[![Docker](https://github.com/{username}/{repo}/workflows/Docker%2FCompose%20Integration%20Test/badge.svg)](https://github.com/{username}/{repo}/actions)
+[![CodeQL](https://github.com/{username}/{repo}/workflows/CodeQL/badge.svg)](https://github.com/{username}/{repo}/actions)
+
+### Documentación
+
+Para más detalles sobre los GitHub Actions, consulta [GITHUB_ACTIONS.md](GITHUB_ACTIONS.md).
+
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo LICENSE para más detalles.

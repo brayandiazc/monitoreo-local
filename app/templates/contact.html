@@ -1,0 +1,130 @@
+{% extends "base.html" %} {% block title %}Contacto - Monitoreo Local{% endblock
+%} {% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h4><i class="fas fa-envelope"></i> Contacto</h4>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Información de Contacto</h5>
+        <p class="card-text">
+          Este es un proyecto de demostración para monitoreo local. Si tienes
+          preguntas o necesitas ayuda, puedes contactar a través de los
+          siguientes medios.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-info text-white">
+        <h5><i class="fas fa-user"></i> Detalles del Proyecto</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <strong>Nombre del Proyecto:</strong><br />
+          Sistema de Monitoreo Local
+        </div>
+        <div class="mb-3">
+          <strong>Descripción:</strong><br />
+          Entorno completo de monitoreo con Docker Compose
+        </div>
+        <div class="mb-3">
+          <strong>Versión:</strong><br />
+          1.0.0
+        </div>
+        <div class="mb-3">
+          <strong>Licencia:</strong><br />
+          MIT
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-success text-white">
+        <h5><i class="fas fa-link"></i> Enlaces Útiles</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <a
+            href="https://flask.palletsprojects.com/"
+            target="_blank"
+            class="btn btn-outline-primary"
+          >
+            <i class="fab fa-python"></i> Flask Documentation
+          </a>
+          <a
+            href="https://prometheus.io/"
+            target="_blank"
+            class="btn btn-outline-info"
+          >
+            <i class="fas fa-chart-bar"></i> Prometheus
+          </a>
+          <a
+            href="https://grafana.com/"
+            target="_blank"
+            class="btn btn-outline-success"
+          >
+            <i class="fas fa-chart-line"></i> Grafana
+          </a>
+          <a
+            href="https://www.elastic.co/elk-stack"
+            target="_blank"
+            class="btn btn-outline-warning"
+          >
+            <i class="fas fa-search"></i> ELK Stack
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-warning text-dark">
+        <h5><i class="fas fa-question-circle"></i> Soporte</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h6>Problemas Comunes:</h6>
+            <ul>
+              <li>
+                Puertos ya en uso: Verifica que los puertos 5000, 9090, 3000,
+                5601 estén libres
+              </li>
+              <li>
+                Contenedores no inician: Ejecuta
+                <code>docker-compose down</code> y luego
+                <code>docker-compose up</code>
+              </li>
+              <li>
+                Logs no aparecen: Verifica que Logstash esté configurado
+                correctamente
+              </li>
+              <li>Métricas no se ven: Revisa la configuración de Prometheus</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h6>Comandos Útiles:</h6>
+            <ul>
+              <li><code>docker-compose up -d</code>: Levantar servicios</li>
+              <li><code>docker-compose down</code>: Detener servicios</li>
+              <li><code>docker-compose logs</code>: Ver logs</li>
+              <li><code>docker-compose ps</code>: Estado de servicios</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

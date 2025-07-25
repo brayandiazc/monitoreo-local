@@ -1,0 +1,123 @@
+{% extends "base.html" %} {% block title %}Acerca de - Monitoreo Local{%
+endblock %} {% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-info text-white">
+        <h4><i class="fas fa-info-circle"></i> Acerca del Proyecto</h4>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Sistema de Monitoreo Local</h5>
+        <p class="card-text">
+          Este proyecto demuestra un entorno completo de monitoreo local
+          utilizando Docker Compose. Incluye todas las herramientas necesarias
+          para monitorear aplicaciones en tiempo real.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h5><i class="fas fa-server"></i> Componentes del Sistema</h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <strong>Flask App:</strong> Aplicación web con logging y métricas
+          </li>
+          <li class="list-group-item">
+            <strong>Prometheus:</strong> Recolección y almacenamiento de
+            métricas
+          </li>
+          <li class="list-group-item">
+            <strong>Grafana:</strong> Visualización de métricas y dashboards
+          </li>
+          <li class="list-group-item">
+            <strong>Elasticsearch:</strong> Motor de búsqueda y análisis
+          </li>
+          <li class="list-group-item">
+            <strong>Logstash:</strong> Procesamiento de logs
+          </li>
+          <li class="list-group-item">
+            <strong>Kibana:</strong> Visualización de logs
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-success text-white">
+        <h5><i class="fas fa-cogs"></i> Características</h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <i class="fas fa-check text-success"></i> Logging estructurado en
+            JSON
+          </li>
+          <li class="list-group-item">
+            <i class="fas fa-check text-success"></i> Métricas automáticas de
+            Flask
+          </li>
+          <li class="list-group-item">
+            <i class="fas fa-check text-success"></i> Dashboards preconfigurados
+          </li>
+          <li class="list-group-item">
+            <i class="fas fa-check text-success"></i> Visualización de logs en
+            tiempo real
+          </li>
+          <li class="list-group-item">
+            <i class="fas fa-check text-success"></i> Alertas configurables
+          </li>
+          <li class="list-group-item">
+            <i class="fas fa-check text-success"></i> Entorno completamente
+            containerizado
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-warning text-dark">
+        <h5><i class="fas fa-book"></i> Información Técnica</h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h6>Puertos Utilizados:</h6>
+            <ul>
+              <li><strong>5000:</strong> Aplicación Flask</li>
+              <li><strong>9090:</strong> Prometheus</li>
+              <li><strong>3000:</strong> Grafana</li>
+              <li><strong>5601:</strong> Kibana</li>
+              <li><strong>9200:</strong> Elasticsearch</li>
+              <li><strong>5044:</strong> Logstash</li>
+            </ul>
+          </div>
+          <div class="col-md-6">
+            <h6>Tecnologías:</h6>
+            <ul>
+              <li>Python 3.9+</li>
+              <li>Flask 2.3.3</li>
+              <li>Docker & Docker Compose</li>
+              <li>Prometheus</li>
+              <li>Grafana</li>
+              <li>ELK Stack</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

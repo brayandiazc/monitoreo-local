@@ -1,0 +1,159 @@
+{% extends "base.html" %} {% block title %}Inicio - Monitoreo Local{% endblock
+%} {% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h4><i class="fas fa-home"></i> Panel de Control</h4>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">Bienvenido al Sistema de Monitoreo Local</h5>
+        <p class="card-text">
+          Esta aplicación demuestra un entorno completo de monitoreo con Flask,
+          Prometheus, Grafana y ELK Stack. Usa los botones de abajo para generar
+          logs y métricas para monitorear.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-info text-white">
+        <h5><i class="fas fa-cogs"></i> Acciones de Prueba</h5>
+      </div>
+      <div class="card-body">
+        <button
+          class="btn btn-success btn-action"
+          onclick="generateLog('info', 'Log informativo generado')"
+        >
+          <i class="fas fa-info-circle"></i> Generar Log Info
+        </button>
+        <button
+          class="btn btn-warning btn-action"
+          onclick="generateLog('warning', 'Log de advertencia generado')"
+        >
+          <i class="fas fa-exclamation-triangle"></i> Generar Log Warning
+        </button>
+        <button
+          class="btn btn-danger btn-action"
+          onclick="generateLog('error', 'Log de error generado')"
+        >
+          <i class="fas fa-times-circle"></i> Generar Log Error
+        </button>
+        <button class="btn btn-primary btn-action" onclick="simulateError()">
+          <i class="fas fa-bug"></i> Simular Error
+        </button>
+        <button class="btn btn-secondary btn-action" onclick="longProcess()">
+          <i class="fas fa-clock"></i> Proceso Largo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-success text-white">
+        <h5><i class="fas fa-link"></i> Enlaces de Monitoreo</h5>
+      </div>
+      <div class="card-body">
+        <div class="d-grid gap-2">
+          <a
+            href="http://localhost:9090"
+            target="_blank"
+            class="btn btn-outline-primary"
+          >
+            <i class="fas fa-chart-bar"></i> Prometheus
+          </a>
+          <a
+            href="http://localhost:3000"
+            target="_blank"
+            class="btn btn-outline-success"
+          >
+            <i class="fas fa-chart-line"></i> Grafana
+          </a>
+          <a
+            href="http://localhost:5601"
+            target="_blank"
+            class="btn btn-outline-warning"
+          >
+            <i class="fas fa-search"></i> Kibana
+          </a>
+          <a href="/metrics" target="_blank" class="btn btn-outline-info">
+            <i class="fas fa-tachometer-alt"></i> Métricas Flask
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-secondary text-white">
+        <h5><i class="fas fa-terminal"></i> Respuesta del Servidor</h5>
+      </div>
+      <div class="card-body">
+        <pre id="response" class="bg-light p-3 rounded">
+Esperando acciones...</pre
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  function generateLog(type, message) {
+    fetch(`/generar-log?type=${type}&message=${encodeURIComponent(message)}`)
+      .then((response) => response.json())
+      .then((data) => {
+        document.getElementById("response").textContent = JSON.stringify(
+          data,
+          null,
+          2
+        );
+      })
+      .catch((error) => {
+        document.getElementById("response").textContent =
+          "Error: " + error.message;
+      });
+  }
+
+  function simulateError() {
+    fetch("/simular-error")
+      .then((response) => response.json())
+      .then((data) => {
+        document.getElementById("response").textContent = JSON.stringify(
+          data,
+          null,
+          2
+        );
+      })
+      .catch((error) => {
+        document.getElementById("response").textContent =
+          "Error: " + error.message;
+      });
+  }
+
+  function longProcess() {
+    document.getElementById("response").textContent =
+      "Iniciando proceso largo...";
+    fetch("/proceso-largo")
+      .then((response) => response.json())
+      .then((data) => {
+        document.getElementById("response").textContent = JSON.stringify(
+          data,
+          null,
+          2
+        );
+      })
+      .catch((error) => {
+        document.getElementById("response").textContent =
+          "Error: " + error.message;
+      });
+  }
+</script>
+{% endblock %}

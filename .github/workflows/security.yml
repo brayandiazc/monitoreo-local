@@ -37,7 +37,7 @@ jobs:
           bandit -r app/ -f json -o bandit-results.json || true
 
       - name: Upload Bandit results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: bandit-results
@@ -50,7 +50,7 @@ jobs:
           safety check --json --output safety-results.json || true
 
       - name: Upload Safety results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: safety-results
@@ -120,7 +120,7 @@ jobs:
           pip-audit --format json --output pip-audit-results.json || true
 
       - name: Upload pip-audit results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: pip-audit-results

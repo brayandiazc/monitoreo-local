@@ -36,10 +36,13 @@ def create_app():
         
         app.logger.info('Aplicación Flask iniciada')
     
-    # Configurar métricas de Prometheus
-    metrics = PrometheusMetrics(app, path='/metrics')
-    
     # Importar rutas
     from app import routes
+    
+    # Registrar blueprint
+    app.register_blueprint(routes.main)
+    
+    # Inicializar métricas
+    routes.init_metrics(app)
     
     return app 
